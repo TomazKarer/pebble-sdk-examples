@@ -12,27 +12,63 @@ void line_layer_update_callback(Layer *layer, GContext* ctx) {
 
 void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed) {
   // Need to be static because they're used by the system later.
-  static char time_text[] = "00:00";
+  static char time_text[] = "16.14";
   static char date_text[] = "Xxxxxxxxx 00";
-
+  
+  static char date_month[] = "Xxxxxxxxx";
+  static char date_mesec[9] = "Xxxxxxxxx";
+  
   char *time_format;
+  
 
   if (!tick_time) {
     time_t now = time(NULL);
     tick_time = localtime(&now);
   }
-
+  
   // TODO: Only update the date when it's changed.
-  strftime(date_text, sizeof(date_text), "%B %e", tick_time);
+  strftime(date_month, sizeof(date_month), "%B", tick_time);
+  if (strcmp(date_month, "January")==0){
+    strcpy(date_mesec,"januar");
+  } else if (strcmp(date_month, "February")==0){
+    strcpy(date_mesec,"februar");
+  } else if (strcmp(date_month, "March")==0){
+    strcpy(date_mesec,"marec");
+  } else if (strcmp(date_month, "April")==0){
+    strcpy(date_mesec,"april");
+  } else if (strcmp(date_month, "May")==0){
+    strcpy(date_mesec,"maj");
+  } else if (strcmp(date_month, "June")==0){
+    strcpy(date_mesec,"junij");
+  } else if (strcmp(date_month, "July")==0){
+    strcpy(date_mesec,"julij");
+  } else if (strcmp(date_month, "August")==0){
+    strcpy(date_mesec,"avgust");
+  } else if (strcmp(date_month, "September")==0){
+    strcpy(date_mesec,"september");
+  } else if (strcmp(date_month, "October")==0){
+    strcpy(date_mesec,"oktober");
+  } else if (strcmp(date_month, "November")==0){
+    strcpy(date_mesec,"november");
+  } else if (strcmp(date_month, "December")==0){
+    strcpy(date_mesec,"december");
+  } else {
+    ;
+  }
+  
+  strftime(date_text, sizeof(date_text), "%e", tick_time);
+  strcat (date_text,". ");
+  strcat (date_text, date_mesec);	
   text_layer_set_text(text_date_layer, date_text);
 
-
+  
+  // TODO pebble system fonts large enough to show clock do not have dot sign. Must change to use own font.
+  
   if (clock_is_24h_style()) {
     time_format = "%R";
   } else {
     time_format = "%I:%M";
   }
-
   strftime(time_text, sizeof(time_text), time_format, tick_time);
 
   // Kludge to handle lack of non-padded hour format string
